@@ -1,10 +1,23 @@
 import { ChartComponent } from "../components/chart/Chart";
-import { useEffect, useRef } from "react";
-import { chartData } from "../components/chart/chartData";
+import { useEffect, useRef, useState } from "react";
+import { fetchMultipleCoinsHistoricalData } from "../services/coinGecko";
 
+interface Data24H {
+  key: string;
+  market_caps: [number, number][];
+  prices: [number, number][];
+  total_volumes: [number, number][];
+}
+
+const coinList = [
+  ["bitcoin", "BTC"],
+  // ["ethereum", "ETH"],
+  // ["cardano", "ADA"],
+  // ["solana", "SOL"],
+];
 const Chart = () => {
   const tickerRef = useRef<HTMLDivElement>(null);
-
+  const [data24H, setData24H] = useState<Data24H[] | null>(null);
   //Trading view widget
   useEffect(() => {
     if (!tickerRef.current) return;
@@ -32,6 +45,30 @@ const Chart = () => {
     tickerRef.current.appendChild(script);
   }, []);
 
+  useEffect(() => {
+    const getHistoryData = async () => {
+      const numberOfDays = 1;
+
+      fetchMultipleCoinsHistoricalData(coinList, numberOfDays)
+        .then((dataArray) => {
+          const newData = dataArray.map((data, index) => ({
+            key: coinList[index][0],
+            ...data,
+          }));
+
+          setData24H(newData);
+        })
+        .catch((error) => {
+          console.error(
+            "Error fetching multiple coins historical data:",
+            error
+          );
+        });
+    };
+
+    getHistoryData();
+  }, []);
+
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-6 my-auto">
       {/* Page Header */}
@@ -45,48 +82,30 @@ const Chart = () => {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-        <ChartComponent
-          data={chartData["1D"]}
-          cryptoName="Bitcoin"
-          cryptoSymbol="BTC"
-          currentPrice={45230.5}
-          priceChange24h={2.45}
-        />
-        <ChartComponent
-          data={chartData["1D"]}
-          cryptoName="Ethereum"
-          cryptoSymbol="ETH"
-          currentPrice={3120.75}
-          priceChange24h={-1.23}
-        />
-        <ChartComponent
-          data={chartData["1D"]}
-          cryptoName="Cardano"
-          cryptoSymbol="ADA"
-          currentPrice={0.58}
-          priceChange24h={5.67}
-        />
-        <ChartComponent
-          data={chartData["1D"]}
-          cryptoName="Solana"
-          cryptoSymbol="SOL"
-          currentPrice={98.42}
-          priceChange24h={-3.12}
-        />
-        <ChartComponent
-          data={chartData["1D"]}
-          cryptoName="Polkadot"
-          cryptoSymbol="DOT"
-          currentPrice={7.23}
-          priceChange24h={1.89}
-        />
-        <ChartComponent
-          data={chartData["1D"]}
-          cryptoName="Ripple"
-          cryptoSymbol="XRP"
-          currentPrice={0.52}
-          priceChange24h={4.32}
-        />
+        {data24H?.map((coinData, ind) => {
+          // Transform CoinGecko data [timestamp, price] to {time, value} format
+          const formattedData = coinData.prices.map(([timestamp, price]) => ({
+            time: Math.floor(timestamp / 1000), // Unix timestamp in seconds for intraday data
+            value: price,
+          }));
+          const prices = coinData.prices;
+
+          return (
+            <ChartComponent
+              key={coinData.key}
+              data={formattedData}
+              cryptoName={`${coinData.key
+                .charAt(0)
+                .toUpperCase()}${coinData.key.slice(1)}`}
+              cryptoSymbol={coinList[ind][1]}
+              currentPrice={prices[prices.length - 1][1]}
+              priceChange24h={
+                ((prices[prices.length - 1][1] - prices[0][1]) / prices[0][1]) *
+                100
+              }
+            />
+          );
+        })}
       </div>
     </div>
   );

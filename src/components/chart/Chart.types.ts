@@ -10,3 +10,11 @@ export interface ChartComponentProps {
     currentPrice?: number;
     priceChange24h?: number;
 }
+
+//Interface for the reruned data from COINGECKO + key(coin name)
+export interface Data24H {
+    key: string;
+    market_caps: [number, number][];
+    prices: [number, number][];
+    total_volumes: [number, number][];
+}
