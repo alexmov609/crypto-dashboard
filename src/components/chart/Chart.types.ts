@@ -1,5 +1,5 @@
 export interface ChartData {
-    time: string;
+    time: number; // Unix timestamp in seconds for intraday data
     value: number;
 }
 
