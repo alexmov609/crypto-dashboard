@@ -4,7 +4,7 @@ import { lineColors, areaTopColors, intervals, type Interval } from "../componen
 
 
 interface Data {
-    time: string,
+    time: number, // Unix timestamp in seconds
     value: number
 }
 
@@ -46,10 +46,14 @@ const useChart = (data: Data[]) => {
                     visible: false,
                 },
             },
+            timeScale: {
+                timeVisible: true, // Show time on the axis
+                secondsVisible: false, // Don't show seconds, just HH:MM
+            },
         });
         chart.timeScale().fitContent();
 
-        //Insert data
+
         const newSeries = chart.addSeries(AreaSeries, {
             // lineColors["1D"],
             topColor: areaTopColors["1D"],
@@ -58,6 +62,7 @@ const useChart = (data: Data[]) => {
 
         //Set range interval and colors for chart
         function setChartInterval(interval: Interval) {
+            //Insert data
             newSeries.setData(data);
             newSeries.applyOptions({
                 lineColor: lineColors[interval],
@@ -65,6 +70,21 @@ const useChart = (data: Data[]) => {
                 bottomColor: 'rgba(41, 98, 255, 0.28)',
             });
             chart.timeScale().fitContent();
+
+            // Set visible range to max 1 day (restrict zoom out)
+            if (data.length > 0) {
+                // const firstTime = data[0].time;
+                // const lastTime = data[data.length - 1].time;
+                chart.timeScale().setVisibleLogicalRange({
+                    from: 0,
+                    to: data.length - 1,
+                });
+                // Apply zoom constraints
+                chart.timeScale().applyOptions({
+                    fixLeftEdge: true,
+                    fixRightEdge: true,
+                });
+            }
         }
         setChartInterval("1D");
 
