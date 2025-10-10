@@ -1,13 +1,7 @@
 import { ChartComponent } from "../components/chart/Chart";
 import { useEffect, useRef, useState } from "react";
 import { fetchMultipleCoinsHistoricalData } from "../services/coinGecko";
-
-interface Data24H {
-  key: string;
-  market_caps: [number, number][];
-  prices: [number, number][];
-  total_volumes: [number, number][];
-}
+import type { Data24H } from "../components/chart/Chart.types";
 
 const coinList = [
   ["bitcoin", "BTC"],
