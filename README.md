@@ -1,3 +1,3 @@
 # React + TypeScript + Vite
 
-Crypto Dashboard
+Crypto Dashboard.
