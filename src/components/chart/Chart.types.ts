@@ -6,11 +6,9 @@ export interface ChartData {
 }
 
 export interface ChartComponentProps {
-    data: ChartData[];
+    coinId: string;
     cryptoName?: string;
     cryptoSymbol?: string;
-    currentPrice?: number;
-    priceChange24h?: number;
 }
 
 //Interface for the reruned data from COINGECKO + key(coin name)

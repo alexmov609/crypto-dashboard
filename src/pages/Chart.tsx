@@ -1,8 +1,5 @@
 import { ChartComponent } from "../components/chart/Chart";
-import { useEffect, useRef, useState } from "react";
-import { fetchMultipleCoinsHistoricalData } from "../services/coinGecko";
-import type { Data24H, ChartData } from "../components/chart/Chart.types";
-import type { UTCTimestamp } from "lightweight-charts";
+import { useEffect, useRef } from "react";
 
 const coinList = [
   ["bitcoin", "BTC"],
@@ -12,7 +9,7 @@ const coinList = [
 ];
 const Chart = () => {
   const tickerRef = useRef<HTMLDivElement>(null);
-  const [data24H, setData24H] = useState<Data24H[] | null>(null);
+
   //Trading view widget
   useEffect(() => {
     if (!tickerRef.current) return;
@@ -40,30 +37,6 @@ const Chart = () => {
     tickerRef.current.appendChild(script);
   }, []);
 
-  useEffect(() => {
-    const getHistoryData = async () => {
-      const numberOfDays = 1;
-
-      fetchMultipleCoinsHistoricalData(coinList, numberOfDays)
-        .then((dataArray) => {
-          const newData = dataArray.map((data, index) => ({
-            key: coinList[index][0],
-            ...data,
-          }));
-
-          setData24H(newData);
-        })
-        .catch((error) => {
-          console.error(
-            "Error fetching multiple coins historical data:",
-            error
-          );
-        });
-    };
-
-    getHistoryData();
-  }, []);
-
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white p-6 my-auto">
       {/* Page Header */}
@@ -77,30 +50,14 @@ const Chart = () => {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
-        {data24H?.map((coinData, ind) => {
-          // Transform CoinGecko data [timestamp, price] to {time, value} format
-          const formattedData: ChartData[] = coinData.prices.map(([timestamp, price]) => ({
-            time: Math.floor(timestamp / 1000) as UTCTimestamp, // Unix timestamp in seconds for intraday data
-            value: price,
-          }));
-          const prices = coinData.prices;
-
-          return (
-            <ChartComponent
-              key={coinData.key}
-              data={formattedData}
-              cryptoName={`${coinData.key
-                .charAt(0)
-                .toUpperCase()}${coinData.key.slice(1)}`}
-              cryptoSymbol={coinList[ind][1]}
-              currentPrice={prices[prices.length - 1][1]}
-              priceChange24h={
-                ((prices[prices.length - 1][1] - prices[0][1]) / prices[0][1]) *
-                100
-              }
-            />
-          );
-        })}
+        {coinList.map(([coinId, coinSymbol]) => (
+          <ChartComponent
+            key={coinId}
+            coinId={coinId}
+            cryptoName={`${coinId.charAt(0).toUpperCase()}${coinId.slice(1)}`}
+            cryptoSymbol={coinSymbol}
+          />
+        ))}
       </div>
     </div>
   );

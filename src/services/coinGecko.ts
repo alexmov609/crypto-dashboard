@@ -30,7 +30,6 @@ export const getHistoricalData = async (coinId: string, days: number) => {
 export const fetchMultipleCoinsHistoricalData = async (coinIds: string[][], days: number) => {
     const promises = coinIds.map(id => getHistoricalData(id[0], days));
     const results = await Promise.all(promises);
-    console.log("results from coinGecko", results);
 
     return results; // Array of historical data objects
 }

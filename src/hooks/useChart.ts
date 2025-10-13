@@ -3,12 +3,12 @@ import { AreaSeries, createChart, ColorType, type UTCTimestamp } from "lightweig
 import { lineColors, areaTopColors, intervals, type Interval } from "../components/chart/chartConfigurations";
 
 
-interface Data {
+export interface Data {
     time: UTCTimestamp, // Unix timestamp in seconds
     value: number
 }
 
-const useChart = (data: Data[]) => {
+const useChart = (data: Data[], graphRange: string, setGraphRange?: (range: string) => void) => {
     const chartContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -17,7 +17,6 @@ const useChart = (data: Data[]) => {
         // Clear previous content
         chartContainerRef.current.innerHTML = "";
         const isDarkMode = true;
-        console.log("isDarkMode", isDarkMode);
         const backgroundColor = isDarkMode ? "#1f2937" : "white";
         const textColor = isDarkMode ? "white" : "black";
 
@@ -62,8 +61,6 @@ const useChart = (data: Data[]) => {
 
         //Set range interval and colors for chart
         function setChartInterval(interval: Interval) {
-            console.log("ddd", data);
-
             //Insert data
             newSeries.setData(data);
             newSeries.applyOptions({
@@ -75,11 +72,11 @@ const useChart = (data: Data[]) => {
 
             // Set visible range to max 1 day (restrict zoom out)
             if (data.length > 0) {
-                // const firstTime = data[0].time;
-                // const lastTime = data[data.length - 1].time;
+                const firstTime = data[0].time;
+                const lastTime = data[data.length - 1].time;
                 chart.timeScale().setVisibleLogicalRange({
-                    from: 0,
-                    to: data.length - 1,
+                    from: firstTime,
+                    to: lastTime,
                 });
                 // Apply zoom constraints
                 chart.timeScale().applyOptions({
@@ -88,7 +85,8 @@ const useChart = (data: Data[]) => {
                 });
             }
         }
-        setChartInterval("1D");
+
+        setChartInterval(graphRange as Interval);
 
         //Range interval buttons
         const buttonsContainer = document.createElement("div");
@@ -110,7 +108,10 @@ const useChart = (data: Data[]) => {
             button.style.cursor = "pointer";
 
             button.innerText = interval;
-            button.addEventListener("click", () => setChartInterval(interval));
+            button.addEventListener("click", () => {
+                setGraphRange?.(interval);
+                setChartInterval(interval)
+            });
             buttonsContainer.appendChild(button);
         });
 
