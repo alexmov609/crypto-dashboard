@@ -1,5 +1,7 @@
+import type { UTCTimestamp } from "lightweight-charts";
+
 export interface ChartData {
-    time: number; // Unix timestamp in seconds for intraday data
+    time: UTCTimestamp; // Unix timestamp in seconds for intraday data
     value: number;
 }
 

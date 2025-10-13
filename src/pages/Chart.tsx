@@ -1,7 +1,8 @@
 import { ChartComponent } from "../components/chart/Chart";
 import { useEffect, useRef, useState } from "react";
 import { fetchMultipleCoinsHistoricalData } from "../services/coinGecko";
-import type { Data24H } from "../components/chart/Chart.types";
+import type { Data24H, ChartData } from "../components/chart/Chart.types";
+import type { UTCTimestamp } from "lightweight-charts";
 
 const coinList = [
   ["bitcoin", "BTC"],
@@ -78,8 +79,8 @@ const Chart = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
         {data24H?.map((coinData, ind) => {
           // Transform CoinGecko data [timestamp, price] to {time, value} format
-          const formattedData = coinData.prices.map(([timestamp, price]) => ({
-            time: Math.floor(timestamp / 1000), // Unix timestamp in seconds for intraday data
+          const formattedData: ChartData[] = coinData.prices.map(([timestamp, price]) => ({
+            time: Math.floor(timestamp / 1000) as UTCTimestamp, // Unix timestamp in seconds for intraday data
             value: price,
           }));
           const prices = coinData.prices;

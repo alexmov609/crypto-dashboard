@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
-import { AreaSeries, createChart, ColorType } from "lightweight-charts";
+import { AreaSeries, createChart, ColorType, type UTCTimestamp } from "lightweight-charts";
 import { lineColors, areaTopColors, intervals, type Interval } from "../components/chart/chartConfigurations";
 
 
 interface Data {
-    time: number, // Unix timestamp in seconds
+    time: UTCTimestamp, // Unix timestamp in seconds
     value: number
 }
 
@@ -62,6 +62,8 @@ const useChart = (data: Data[]) => {
 
         //Set range interval and colors for chart
         function setChartInterval(interval: Interval) {
+            console.log("ddd", data);
+
             //Insert data
             newSeries.setData(data);
             newSeries.applyOptions({
