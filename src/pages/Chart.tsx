@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 const coinList = [
   ["bitcoin", "BTC"],
-  // ["ethereum", "ETH"],
+  ["ethereum", "ETH"],
   // ["cardano", "ADA"],
   // ["solana", "SOL"],
 ];
