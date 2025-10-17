@@ -14,8 +14,8 @@ function App() {
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<Chart />} />
-        <Route path="/prices" element={<Prices />} />
+        <Route path="/" element={<Prices />} />
+        <Route path="/charts" element={<Chart />} />
         {/* <Route path="/prices" element={<Prices />} />
         <Route path="/converter" element={<Converter />} />
         <Route path="/gainers" element={<Gainers />} />
