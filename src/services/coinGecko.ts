@@ -35,8 +35,8 @@ export const fetchMultipleCoinsHistoricalData = async (coinIds: string[][], days
 }
 
 /**
- * Fetach from coingecko current data about symbols
- * 
+ * Fetch from coinGecko current data about symbols
+ * https://docs.coingecko.com/reference/simple-price
  * @param coins 
  * @returns 
  */
