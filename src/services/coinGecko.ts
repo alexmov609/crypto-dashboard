@@ -33,3 +33,15 @@ export const fetchMultipleCoinsHistoricalData = async (coinIds: string[][], days
 
     return results; // Array of historical data objects
 }
+
+/**
+ * Fetach from coingecko current data about symbols
+ * 
+ * @param coins 
+ * @returns 
+ */
+export const getLivePriceData = async (coins: string[]) => {
+
+    const response = await axios.get(`${coinGeckoBaseUrl}/simple/price?ids=${coins.toString()}&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true&include_last_updated_at=true`);
+    return response.data;
+}
