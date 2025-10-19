@@ -1,4 +1,4 @@
-import type { LiveDataResponseObject } from "../../pages/Prices";
+import type { LiveDataResponseObject } from "../../types/Prices.types";
 import {
   beautifyNumber,
   beautifyNumberToPercent,
@@ -8,14 +8,23 @@ const Card = ({
   name,
   data,
   icon,
+  binanceLiveData,
+  binancePrevData,
 }: {
   name: string;
   data: LiveDataResponseObject;
   icon?: string;
+  binanceLiveData?: number;
+  binancePrevData?: number;
 }) => {
   const currentPrice = beautifyNumber(data.usd, "USD");
   const marketCap = beautifyNumber(data.usd_market_cap, "USD");
   const price24HChange = beautifyNumberToPercent(data.usd_24h_change / 100, 2);
+
+  // Format Binance live data if available
+  const displayPrice = binanceLiveData
+    ? beautifyNumber(binanceLiveData, "USD")
+    : currentPrice;
 
   return (
     <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl border border-gray-700/50 shadow-lg py-6 px-5 hover:shadow-2xl hover:border-gray-600 hover:-translate-y-1 transition-all duration-300 ease-out">
@@ -36,8 +45,16 @@ const Card = ({
             {name.charAt(0).toUpperCase() + name.slice(1)}
           </span>
         </div>
-        <h1 className="font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-500">
-          {currentPrice}
+        <h1
+          className={`font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r ${
+            binanceLiveData !== undefined && binancePrevData !== undefined
+              ? binanceLiveData > binancePrevData
+                ? "from-green-400 to-green-600"
+                : "from-red-400 to-red-600"
+              : "from-green-400 to-green-600"
+          }`}
+        >
+          {displayPrice}
         </h1>
       </div>
       <div className="flex flex-row justify-between gap-4">

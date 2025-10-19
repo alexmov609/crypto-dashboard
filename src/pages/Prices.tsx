@@ -1,56 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import Card from "../components/card/Card";
 import { getLivePriceData } from "../services/coinGecko";
+import type {
+  LiveDataResponse,
+  LiveDataResponseObject,
+} from "../types/Prices.types";
+import { binanceSymbols, coinIcons, coinPricesArray } from "../data/pricesData";
 
-// Icon mapping for crypto coins
-const coinIcons: { [key: string]: string } = {
-  bitcoin: "/cryptoIcons/bitcoin.svg",
-  ethereum: "/cryptoIcons/ethereum.svg",
-  tether: "/cryptoIcons/tether.svg",
-  binancecoin: "/cryptoIcons/binancecoin.svg",
-  xrp: "/cryptoIcons/xrp.svg",
-  solana: "/cryptoIcons/solana.svg",
-  "usd-coin": "/cryptoIcons/usd-coin.svg",
-  dogecoin: "/cryptoIcons/dogecoin.svg",
-  tron: "/cryptoIcons/tron.svg",
-  cardano: "/cryptoIcons/cardano.svg",
-  hyperliquid: "/cryptoIcons/hyperliquid.svg",
-  chainlink: "/cryptoIcons/chainlink.svg",
-  "bitcoin-cash": "/cryptoIcons/bitcoin-cash.svg",
-};
-
-const coinPricesArray = [
-  "bitcoin",
-  "ethereum",
-  "tether",
-  "binancecoin",
-  "xrp",
-  "solana",
-  "usd-coin",
-  "dogecoin",
-  "tron",
-  "cardano",
-  "hyperliquid",
-  "chainlink",
-  "bitcoin-cash",
-];
-
-export interface LiveDataResponseObject {
-  usd: number;
-  usd_market_cap: number;
-  usd_24h_vol: number;
-  usd_24h_change: number;
-  last_updated_at: number;
-}
-export interface LiveDataResponse {
-  [key: string]: LiveDataResponseObject;
-}
 const Prices = () => {
   const [liveData, setLiveData] = useState<LiveDataResponse | null>(null);
+  const [prevPrices, setPrevPrices] = useState<{
+    [k: string]: number;
+  } | null>();
+  const [livePrices, setLivePrices] = useState<{ [k: string]: number } | null>(
+    null
+  );
 
   const tickerRef = useRef<HTMLDivElement>(null);
 
-  //Trading view widget
+  /**
+   * Trading view widget
+   */
   useEffect(() => {
     if (!tickerRef.current) return;
 
@@ -77,15 +47,65 @@ const Prices = () => {
     tickerRef.current.appendChild(script);
   }, []);
 
+  /**
+   * Fetch live price data on component mount
+   */
   useEffect(() => {
     const getLiveData = async () => {
       const response = await getLivePriceData(coinPricesArray);
-      console.log("response data", response);
-
       setLiveData(response);
     };
 
     getLiveData();
+  }, []);
+
+  useEffect(() => {
+    // Combined streams for multiple symbols
+    const streams = binanceSymbols.map((s) => `${s}@trade`).join("/");
+    const ws = new WebSocket(
+      `wss://stream.binance.com:9443/stream?streams=${streams}`
+    );
+    ws.onopen = () => {
+      console.log("Connected to Binance WebSocket");
+    };
+
+    const lastPricesData = new Map<string, number>();
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      const coinData = message.data;
+      // Store with lowercase symbol to match binanceSymbols array
+      const symbol = coinData.s.toLowerCase(); // "BTCUSDT" -> "btcusdt"
+      const price = parseFloat(coinData.p); // Convert string to number
+      lastPricesData.set(symbol, price);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    ws.onclose = () => {
+      console.log("Disconnected from WebSocket");
+    };
+
+    const intervalId = setInterval(() => {
+      if (lastPricesData.size > 0) {
+        const pricesObject = Object.fromEntries(lastPricesData);
+
+        // Use functional update to get current state value
+        setLivePrices((currentLivePrices) => {
+          // Save current live prices as previous before updating
+          setPrevPrices(currentLivePrices);
+          // Return new prices
+          return pricesObject;
+        });
+      }
+    }, 1000);
+
+    // Cleanup: close connection when component unmounts
+    return () => {
+      ws.close();
+      clearInterval(intervalId);
+    };
   }, []);
 
   return (
@@ -107,12 +127,15 @@ const Prices = () => {
               if (!coinData) {
                 return "";
               }
+
               return (
                 <Card
                   key={ind}
                   name={el}
                   data={coinData}
                   icon={coinIcons[el]}
+                  binanceLiveData={livePrices?.[binanceSymbols[ind]]}
+                  binancePrevData={prevPrices?.[binanceSymbols[ind]]}
                 />
               );
             })}

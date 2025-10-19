@@ -6,8 +6,8 @@ const Header = () => {
       <nav className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="text-2xl font-bold text-white">CryptoDash</div>
         <ul className="flex gap-6 text-white">
-          <Link to="/">Charts</Link>
-          <Link to="/prices">Prices</Link>
+          <Link to="/">Prices</Link>
+          <Link to="/charts">Charts</Link>
           {/* <Link to="/">Converter</Link>
           <Link to="/"> Gainers/Losers</Link>
           <Link to="/">Alerts</Link>
