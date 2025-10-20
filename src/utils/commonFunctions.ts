@@ -6,7 +6,7 @@
  * @returns 
  */
 export const beautifyNumber = (number: number, currency: string) => {
-    return new Intl.NumberFormat("en-IN", {
+    return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: currency,
     }).format(number);
