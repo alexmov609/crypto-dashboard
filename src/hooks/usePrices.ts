@@ -2,6 +2,7 @@ import { useEffect, useRef, type Dispatch, type SetStateAction } from "react";
 import { binanceSymbols, coinPricesArray } from "../data/pricesData";
 import { getLivePriceData } from "../services/coinGecko";
 import type { LiveDataResponse } from "../types/Prices.types";
+import { createBinanceWebSocket } from "../services/binance";
 
 export const usePrices = (
     setLiveData: Dispatch<SetStateAction<LiveDataResponse | null>>,
@@ -55,37 +56,11 @@ export const usePrices = (
      * WebSocket connection to Binance for live price updates
      */
     useEffect(() => {
-        // Combined streams for multiple symbols
-        const streams = binanceSymbols.map((s) => `${s}@trade`).join("/");
-        const ws = new WebSocket(
-            `wss://stream.binance.com:9443/stream?streams=${streams}`
-        );
-        ws.onopen = () => {
-            console.log("Connected to Binance WebSocket");
-        };
-
-        const lastPricesData = new Map<string, number>();
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            const coinData = message.data;
-            // Store with lowercase symbol to match binanceSymbols array
-            const symbol = coinData.s.toLowerCase(); // "BTCUSDT" -> "btcusdt"
-            const price = parseFloat(coinData.p); // Convert string to number
-            lastPricesData.set(symbol, price);
-        };
-
-        ws.onerror = (error) => {
-            console.error("WebSocket error:", error);
-        };
-
-        ws.onclose = () => {
-            console.log("Disconnected from WebSocket");
-        };
-
-        // Update live prices state every time interval
-        const intervalId = setInterval(() => {
-            if (lastPricesData.size > 0) {
-                const pricesObject = Object.fromEntries(lastPricesData);
+        const cleanup = createBinanceWebSocket(
+            binanceSymbols,
+            (pricesMap) => {
+                // Convert Map to plain object
+                const pricesObject = Object.fromEntries(pricesMap);
 
                 // Use functional update to get current state value
                 setLivePrices((currentLivePrices) => {
@@ -95,13 +70,10 @@ export const usePrices = (
                     return pricesObject;
                 });
             }
-        }, 1000);
+        );
 
         // Cleanup: close connection when component unmounts
-        return () => {
-            ws.close();
-            clearInterval(intervalId);
-        };
+        return cleanup;
     }, []);
 
 
