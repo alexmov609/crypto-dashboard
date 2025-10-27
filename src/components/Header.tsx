@@ -8,7 +8,8 @@ const Header = () => {
         <ul className="flex gap-6 text-white">
           <Link to="/">Prices</Link>
           <Link to="/charts">Charts</Link>
-          {/* <Link to="/">Converter</Link>
+          <Link to="/converter">Converter</Link>
+          {/* 
           <Link to="/"> Gainers/Losers</Link>
           <Link to="/">Alerts</Link>
           <Link to="/">Portfolio</Link> */}
