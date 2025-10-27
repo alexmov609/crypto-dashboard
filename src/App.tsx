@@ -8,6 +8,7 @@ import Prices from "./pages/Prices";
 // import Portfolio from "./pages/Portfolio";
 import "./index.css";
 import Chart from "./pages/Chart";
+import Converter from "./pages/Converter";
 
 function App() {
   return (
@@ -16,8 +17,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Prices />} />
         <Route path="/charts" element={<Chart />} />
-        {/* <Route path="/prices" element={<Prices />} />
         <Route path="/converter" element={<Converter />} />
+
+        {/*
         <Route path="/gainers" element={<Gainers />} />
         <Route path="/alerts" element={<Alerts />} />
         <Route path="/portfolio" element={<Portfolio />} /> */}
