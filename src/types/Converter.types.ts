@@ -1,5 +1,3 @@
-import type { SellBuyCoin } from "../pages/Converter";
-
 // Type for coin to sell/buy
 export interface SellBuyCoin {
     name: string;
