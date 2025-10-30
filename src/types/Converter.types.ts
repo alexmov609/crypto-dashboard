@@ -1,3 +1,5 @@
+import type { SellBuyCoin } from "../pages/Converter";
+
 export interface CoinListResponse {
     ath: number;
     ath_change_percentage: number;
@@ -29,4 +31,21 @@ export interface CoinListResponse {
     symbol: string;
     total_supply: number;
     total_volume: number;
+}
+
+export interface UseConverterParams {
+    setConvertAmount: (value: string) => void;
+    setConvertAmountError: (value: boolean) => void;
+    setCoinList: (value: string[][]) => void;
+    setConvertionResult: (value: number | null) => void;
+    setShowFromDropdown: (value: boolean) => void;
+    setShowToDropdown: (value: boolean) => void;
+    coinToBuy: SellBuyCoin | null;
+    coinToSell: SellBuyCoin | null;
+    convertAmount: string | null;
+    setCoinToBuy: (value: SellBuyCoin | null) => void;
+    setCoinToSell: (value: SellBuyCoin | null) => void;
+    setCoinToSellError: (value: boolean) => void;
+    setCoinToBuyError: (value: boolean) => void;
+    setApiGetPriceError: (value: boolean) => void;
 }

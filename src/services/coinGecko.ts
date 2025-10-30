@@ -90,7 +90,7 @@ let coinsListPromise: Promise<string[][]> | null = null;
  * Uses in-memory cache to avoid duplicate requests per session.
  * @returns
  */
-export const getCoinsList = async (): Promise<string[][]> => {
+export const getCoinsList = async (): Promise<string[][] | []> => {
     // Return cached data if available
     if (coinsListCache) {
         console.log("Returning cached coins list");

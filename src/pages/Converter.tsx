@@ -1,7 +1,7 @@
-import { useEffect, useState, useRef } from "react";
-import { getCoinsList, getLivePrice } from "../services/coinGecko";
+import { useState } from "react";
+import { useConverter } from "../hooks/useConverter";
 
-interface SellBuyCoin {
+export interface SellBuyCoin {
   name: string;
   coin: string;
 }
@@ -17,96 +17,33 @@ const Converter = () => {
   const [convertionResult, setConvertionResult] = useState<number | null>(null);
   const [showFromDropdown, setShowFromDropdown] = useState(false);
   const [showToDropdown, setShowToDropdown] = useState(false);
-  const fromDropdownRef = useRef<HTMLDivElement>(null);
-  const toDropdownRef = useRef<HTMLDivElement>(null);
+  const [apiGetPriceError, setApiGetPriceError] = useState(false);
 
-  useEffect(() => {
-    const fetchCoinList = async () => {
-      const coins: string[][] = await getCoinsList();
-      setCoinList(coins);
-    };
-
-    fetchCoinList();
-  }, []);
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        fromDropdownRef.current &&
-        !fromDropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowFromDropdown(false);
-      }
-      if (
-        toDropdownRef.current &&
-        !toDropdownRef.current.contains(event.target as Node)
-      ) {
-        setShowToDropdown(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  //change amount input handler
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    // Allow only digits and one dot
-    if (/^\d*\.?\d*$/.test(val)) {
-      setConvertAmount(val);
-    }
-  };
-
-  const addConvertAmount = (convertAmount: string) => {
-    const currentAmount = parseFloat(convertAmount) || 0;
-    const newAmount =
-      currentAmount % 1 === 0 ? currentAmount + 1 : currentAmount + 0.01;
-    setConvertAmount(newAmount.toFixed(2).toString());
-  };
-
-  const subConvertAmount = (convertAmount: string) => {
-    const currentAmount = parseFloat(convertAmount) || 0;
-    if (currentAmount === 0) return;
-
-    const newAmount =
-      currentAmount % 1 === 0 ? currentAmount - 1 : currentAmount - 0.01;
-    setConvertAmount(newAmount.toFixed(2).toString());
-  };
-
-  /**
-   * Calculate conversion result
-   */
-  const handleConvert = async () => {
-    if (coinToBuy === null || coinToSell === null) {
-      return;
-    }
-
-    if (convertAmount === "" || parseFloat(convertAmount) === 0) {
-      setConvertAmountError(true);
-      return;
-    }
-    setConvertAmountError(false);
-
-    //get live prices for both coins
-    const prices = await getLivePrice([coinToBuy.name, coinToSell.name]);
-    if (!prices) {
-      return;
-    }
-
-    const convertRes =
-      (prices[coinToSell.name].usd / prices[coinToBuy.name].usd) *
-      parseFloat(convertAmount);
-
-    setConvertionResult(convertRes);
-  };
-
-  const handleChangeCoins = () => {
-    const tmp = coinToBuy;
-    setCoinToBuy(coinToSell);
-    setCoinToSell(tmp);
-  };
+  const useConverterData = useConverter({
+    setConvertAmount,
+    setConvertAmountError,
+    setCoinList,
+    setConvertionResult,
+    setShowFromDropdown,
+    setShowToDropdown,
+    coinToBuy,
+    coinToSell,
+    convertAmount,
+    setCoinToBuy,
+    setCoinToSell,
+    setCoinToSellError,
+    setCoinToBuyError,
+    setApiGetPriceError,
+  });
+  const {
+    fromDropdownRef,
+    toDropdownRef,
+    handleChange,
+    handleChangeCoins,
+    handleConvert,
+    addConvertAmount,
+    subConvertAmount,
+  } = useConverterData;
 
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden flex items-center justify-center p-6">
@@ -367,6 +304,13 @@ const Converter = () => {
                       ))}
                     </div>
                   )}
+                  {coinToBuyError ? (
+                    <div className="text-red-500 mt-2 ms-2">
+                      Please provide correct Coin to Buy *
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
             </div>
@@ -378,20 +322,28 @@ const Converter = () => {
               <div className="text-sm font-semibold text-gray-400 mb-2">
                 Conversion Result
               </div>
-              <div className="flex items-baseline gap-2">
-                <span className="text-3xl md:text-4xl font-bold text-green-400">
-                  {convertionResult && convertionResult.toFixed(6)}
-                  0.00
-                </span>
-                <span className="text-lg text-gray-400">ETH</span>
-              </div>
-              <div className="text-xs text-gray-500 mt-2">
-                {convertionResult
-                  ? `1 ${coinToSell!.coin.toUpperCase()} = ${
-                      convertionResult / parseFloat(convertAmount)
-                    } ${coinToBuy!.coin.toUpperCase()}`
-                  : ""}
-              </div>
+              {apiGetPriceError ? (
+                <div className="text-red-500 mt-2 ms-2">
+                  Error to fetch Coins Prices, please try again later *
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-3xl md:text-4xl font-bold text-green-400">
+                      {convertionResult && convertionResult.toFixed(6)}
+                      0.00
+                    </span>
+                    <span className="text-lg text-gray-400">ETH</span>
+                  </div>
+                  <div className="text-xs text-gray-500 mt-2">
+                    {convertionResult
+                      ? `1 ${coinToSell!.coin.toUpperCase()} = ${
+                          convertionResult / parseFloat(convertAmount)
+                        } ${coinToBuy!.coin.toUpperCase()}`
+                      : ""}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
