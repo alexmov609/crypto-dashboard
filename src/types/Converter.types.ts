@@ -1,5 +1,12 @@
 import type { SellBuyCoin } from "../pages/Converter";
 
+// Type for coin to sell/buy
+export interface SellBuyCoin {
+    name: string;
+    coin: string;
+}
+
+// Response type for CoinGecko coins list API
 export interface CoinListResponse {
     ath: number;
     ath_change_percentage: number;
@@ -33,6 +40,7 @@ export interface CoinListResponse {
     total_volume: number;
 }
 
+// Parameters for useConverter hook
 export interface UseConverterParams {
     setConvertAmount: (value: string) => void;
     setConvertAmountError: (value: boolean) => void;

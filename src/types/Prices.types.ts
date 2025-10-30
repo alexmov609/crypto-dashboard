@@ -6,6 +6,8 @@ export interface LiveDataResponseObject {
     usd_24h_change: number;
     last_updated_at: number;
 }
+
+// Live data response mapping coin names to their data
 export interface LiveDataResponse {
     [key: string]: LiveDataResponseObject;
 }

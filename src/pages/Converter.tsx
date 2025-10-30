@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { useConverter } from "../hooks/useConverter";
 
-export interface SellBuyCoin {
-  name: string;
-  coin: string;
-}
-
 const Converter = () => {
   const [convertAmount, setConvertAmount] = useState<string>("");
   const [convertAmountError, setConvertAmountError] = useState<boolean>(false);
