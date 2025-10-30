@@ -1,4 +1,113 @@
+import { useEffect, useState, useRef } from "react";
+import { getCoinsList, getLivePrice } from "../services/coinGecko";
+
+interface SellBuyCoin {
+  name: string;
+  coin: string;
+}
+
 const Converter = () => {
+  const [convertAmount, setConvertAmount] = useState<string>("");
+  const [convertAmountError, setConvertAmountError] = useState<boolean>(false);
+  const [coinList, setCoinList] = useState<string[][] | null>(null);
+  const [coinToSell, setCoinToSell] = useState<SellBuyCoin | null>(null);
+  const [coinToSellError, setCoinToSellError] = useState<boolean>(false);
+  const [coinToBuy, setCoinToBuy] = useState<SellBuyCoin | null>(null);
+  const [coinToBuyError, setCoinToBuyError] = useState<boolean>(false);
+  const [convertionResult, setConvertionResult] = useState<number | null>(null);
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
+  const fromDropdownRef = useRef<HTMLDivElement>(null);
+  const toDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const fetchCoinList = async () => {
+      const coins: string[][] = await getCoinsList();
+      setCoinList(coins);
+    };
+
+    fetchCoinList();
+  }, []);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        fromDropdownRef.current &&
+        !fromDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowFromDropdown(false);
+      }
+      if (
+        toDropdownRef.current &&
+        !toDropdownRef.current.contains(event.target as Node)
+      ) {
+        setShowToDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  //change amount input handler
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    // Allow only digits and one dot
+    if (/^\d*\.?\d*$/.test(val)) {
+      setConvertAmount(val);
+    }
+  };
+
+  const addConvertAmount = (convertAmount: string) => {
+    const currentAmount = parseFloat(convertAmount) || 0;
+    const newAmount =
+      currentAmount % 1 === 0 ? currentAmount + 1 : currentAmount + 0.01;
+    setConvertAmount(newAmount.toFixed(2).toString());
+  };
+
+  const subConvertAmount = (convertAmount: string) => {
+    const currentAmount = parseFloat(convertAmount) || 0;
+    if (currentAmount === 0) return;
+
+    const newAmount =
+      currentAmount % 1 === 0 ? currentAmount - 1 : currentAmount - 0.01;
+    setConvertAmount(newAmount.toFixed(2).toString());
+  };
+
+  /**
+   * Calculate conversion result
+   */
+  const handleConvert = async () => {
+    if (coinToBuy === null || coinToSell === null) {
+      return;
+    }
+
+    if (convertAmount === "" || parseFloat(convertAmount) === 0) {
+      setConvertAmountError(true);
+      return;
+    }
+    setConvertAmountError(false);
+
+    //get live prices for both coins
+    const prices = await getLivePrice([coinToBuy.name, coinToSell.name]);
+    if (!prices) {
+      return;
+    }
+
+    const convertRes =
+      (prices[coinToSell.name].usd / prices[coinToBuy.name].usd) *
+      parseFloat(convertAmount);
+
+    setConvertionResult(convertRes);
+  };
+
+  const handleChangeCoins = () => {
+    const tmp = coinToBuy;
+    setCoinToBuy(coinToSell);
+    setCoinToSell(tmp);
+  };
+
   return (
     <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden flex items-center justify-center p-6">
       <div className="w-full max-w-2xl">
@@ -30,22 +139,35 @@ const Converter = () => {
                   <input
                     id="amount"
                     type="text"
+                    value={convertAmount}
+                    onChange={(e) => handleChange(e)}
                     placeholder="0.00"
                     className="h-12 w-full rounded-lg bg-black/50 backdrop-blur-sm px-4 border border-green-400/50 font-medium outline-none transition-all duration-300 ease-in-out hover:border-green-400 hover:shadow-[0_0_15px_rgba(74,222,128,0.3)] focus:border-green-500 focus:ring-2 focus:ring-green-500/50 focus:shadow-[0_0_20px_rgba(74,222,128,0.4)]"
                   />
                 </div>
-
                 {/* Quick Amount Buttons */}
                 <div className="flex flex-row gap-2">
-                  <button className="w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300">
+                  <button
+                    onClick={() => subConvertAmount(convertAmount)}
+                    className="w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300"
+                  >
                     -
                   </button>
-                  <button className="w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300">
+                  <button
+                    onClick={() => addConvertAmount(convertAmount)}
+                    className="w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300"
+                  >
                     +
                   </button>
                 </div>
               </div>
-
+              {convertAmountError ? (
+                <div className="text-red-500 mt-2 ms-2">
+                  Amount is required *
+                </div>
+              ) : (
+                ""
+              )}
               {/* Coin Select */}
               <div className="mt-4">
                 <label
@@ -54,30 +176,93 @@ const Converter = () => {
                 >
                   Cryptocurrency
                 </label>
-                <select
-                  name="from-coin"
-                  id="from-coin"
-                  className="w-full px-4 py-3 bg-black/50 backdrop-blur-sm border border-green-400/50 rounded-lg text-white font-medium cursor-pointer outline-none transition-all duration-300 ease-in-out hover:border-green-400 hover:shadow-[0_0_15px_rgba(74,222,128,0.3)] focus:border-green-500 focus:ring-2 focus:ring-green-500/50 focus:shadow-[0_0_20px_rgba(74,222,128,0.4)] appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27rgb(74,222,128)%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-12"
-                >
-                  <option value="btc" className="bg-gray-900">
-                    Bitcoin (BTC)
-                  </option>
-                  <option value="eth" className="bg-gray-900">
-                    Ethereum (ETH)
-                  </option>
-                  <option value="usdt" className="bg-gray-900">
-                    Tether (USDT)
-                  </option>
-                  <option value="bnb" className="bg-gray-900">
-                    BNB (BNB)
-                  </option>
-                </select>
+                <div className="relative" ref={fromDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowFromDropdown(!showFromDropdown)}
+                    className="w-full px-4 py-3 bg-black/50 backdrop-blur-sm border border-green-400/50 rounded-lg text-white font-medium cursor-pointer outline-none transition-all duration-300 ease-in-out hover:border-green-400 hover:shadow-[0_0_15px_rgba(74,222,128,0.3)] focus:border-green-500 focus:ring-2 focus:ring-green-500/50 focus:shadow-[0_0_20px_rgba(74,222,128,0.4)] flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      {coinToSell && coinList ? (
+                        <>
+                          <img
+                            src={
+                              coinList.find(
+                                (c) => c[0] === coinToSell.name
+                              )?.[3]
+                            }
+                            className="w-6 h-6 rounded-full"
+                            alt={coinToSell.name}
+                          />
+                          <span>
+                            {coinToSell.name.charAt(0).toUpperCase() +
+                              coinToSell.name.slice(1)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-gray-400">Select a coin</span>
+                      )}
+                    </div>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {showFromDropdown && coinList && (
+                    <div className="absolute z-50 w-full mt-2 bg-gray-900 border border-green-400/50 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {coinList.map((coin: string[], ind: number) => (
+                        <button
+                          key={ind + "_sell"}
+                          type="button"
+                          onClick={() => {
+                            setCoinToSell({ name: coin[0], coin: coin[2] });
+                            setShowFromDropdown(false);
+                          }}
+                          className="w-full px-4 py-3 flex items-center gap-3 hover:bg-green-500/20 transition-colors text-left"
+                        >
+                          <img
+                            src={coin[3]}
+                            className="w-6 h-6 rounded-full"
+                            alt={coin[0]}
+                          />
+                          <span className="text-white font-medium">
+                            {coin[0].charAt(0).toUpperCase() + coin[0].slice(1)}{" "}
+                            ({coin[2]})
+                          </span>
+                          <span className="text-gray-400 text-sm ml-auto">
+                            {coin[1].toUpperCase()}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {coinToSellError ? (
+                    <div className="text-red-500 mt-2 ms-2">
+                      Please provide correct Coin to Sell *
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                </div>
               </div>
             </div>
           </div>
 
           {/* Exchange Icon */}
-          <div className="flex justify-center -my-3 relative z-10">
+          <div
+            onClick={handleChangeCoins}
+            className="flex justify-center -my-3 relative z-10 cursor-pointer"
+          >
             <div className="bg-gradient-to-br from-green-400 to-green-600 rounded-full p-3 shadow-lg shadow-green-500/50">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -114,24 +299,75 @@ const Converter = () => {
                 >
                   Cryptocurrency
                 </label>
-                <select
-                  name="to-coin"
-                  id="to-coin"
-                  className="w-full px-4 py-3 bg-black/50 backdrop-blur-sm border border-green-400/50 rounded-lg text-white font-medium cursor-pointer outline-none transition-all duration-300 ease-in-out hover:border-green-400 hover:shadow-[0_0_15px_rgba(74,222,128,0.3)] focus:border-green-500 focus:ring-2 focus:ring-green-500/50 focus:shadow-[0_0_20px_rgba(74,222,128,0.4)] appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27rgb(74,222,128)%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3e%3cpolyline points=%276 9 12 15 18 9%27%3e%3c/polyline%3e%3c/svg%3e')] bg-[length:1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-12"
-                >
-                  <option value="eth" className="bg-gray-900">
-                    Ethereum (ETH)
-                  </option>
-                  <option value="btc" className="bg-gray-900">
-                    Bitcoin (BTC)
-                  </option>
-                  <option value="usdt" className="bg-gray-900">
-                    Tether (USDT)
-                  </option>
-                  <option value="bnb" className="bg-gray-900">
-                    BNB (BNB)
-                  </option>
-                </select>
+                <div className="relative" ref={toDropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setShowToDropdown(!showToDropdown)}
+                    className="w-full px-4 py-3 bg-black/50 backdrop-blur-sm border border-green-400/50 rounded-lg text-white font-medium cursor-pointer outline-none transition-all duration-300 ease-in-out hover:border-green-400 hover:shadow-[0_0_15px_rgba(74,222,128,0.3)] focus:border-green-500 focus:ring-2 focus:ring-green-500/50 focus:shadow-[0_0_20px_rgba(74,222,128,0.4)] flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      {coinToBuy && coinList ? (
+                        <>
+                          <img
+                            src={
+                              coinList.find((c) => c[0] === coinToBuy.name)?.[3]
+                            }
+                            className="w-6 h-6 rounded-full"
+                            alt={coinToBuy.name}
+                          />
+                          <span>
+                            {coinToBuy.name.charAt(0).toUpperCase() +
+                              coinToBuy.name.slice(1)}
+                          </span>
+                        </>
+                      ) : (
+                        <span className="text-gray-400">Select a coin</span>
+                      )}
+                    </div>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {showToDropdown && coinList && (
+                    <div className="absolute z-50 w-full mt-2 bg-gray-900 border border-green-400/50 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                      {coinList.map((coin: string[], ind: number) => (
+                        <button
+                          key={ind + "_buy"}
+                          type="button"
+                          onClick={() => {
+                            setCoinToBuy({ name: coin[0], coin: coin[2] });
+                            setShowToDropdown(false);
+                          }}
+                          className="w-full px-4 py-3 flex items-center gap-3 hover:bg-green-500/20 transition-colors text-left"
+                        >
+                          <img
+                            src={coin[3]}
+                            className="w-6 h-6 rounded-full"
+                            alt={coin[0]}
+                          />
+                          <span className="text-white font-medium">
+                            {coin[0].charAt(0).toUpperCase() + coin[0].slice(1)}{" "}
+                            ({coin[2]})
+                          </span>
+                          <span className="text-gray-400 text-sm ml-auto">
+                            {coin[1].toUpperCase()}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -144,16 +380,26 @@ const Converter = () => {
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl md:text-4xl font-bold text-green-400">
+                  {convertionResult && convertionResult.toFixed(6)}
                   0.00
                 </span>
                 <span className="text-lg text-gray-400">ETH</span>
               </div>
-              <div className="text-xs text-gray-500 mt-2">1 BTC = 0.00 ETH</div>
+              <div className="text-xs text-gray-500 mt-2">
+                {convertionResult
+                  ? `1 ${coinToSell!.coin.toUpperCase()} = ${
+                      convertionResult / parseFloat(convertAmount)
+                    } ${coinToBuy!.coin.toUpperCase()}`
+                  : ""}
+              </div>
             </div>
           </div>
 
           {/* Convert Button */}
-          <button className="w-full mt-6 px-6 py-4 bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-xl cursor-pointer text-gray-900 font-bold text-lg shadow-lg hover:shadow-[0_0_30px_rgba(74,222,128,0.5)] transition-all duration-300 transform hover:scale-[1.02]">
+          <button
+            className="w-full mt-6 px-6 py-4 bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-xl cursor-pointer text-gray-900 font-bold text-lg shadow-lg hover:shadow-[0_0_30px_rgba(74,222,128,0.5)] transition-all duration-300 transform hover:scale-[1.02]"
+            onClick={handleConvert}
+          >
             Convert
           </button>
         </div>
