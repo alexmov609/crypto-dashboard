@@ -104,14 +104,18 @@ export const useConverter = ({ setConvertAmount,
         setApiGetPriceError(false);
         setConvertAmountError(false);
 
-        if (coinToBuy === null || coinToSell === null) {
-            setCoinToBuyError(true);
-            setCoinToSellError(true);
+        if (convertAmount === "" || parseFloat(convertAmount!) === 0) {
+            setConvertAmountError(true);
             return;
         }
 
-        if (convertAmount === "" || parseFloat(convertAmount!) === 0) {
-            setConvertAmountError(true);
+        if (coinToSell === null) {
+            setCoinToSellError(true);
+            return
+        }
+
+        if (coinToBuy === null) {
+            setCoinToBuyError(true);
             return;
         }
 
