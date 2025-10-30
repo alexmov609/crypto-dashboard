@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useConverter } from "../hooks/useConverter";
+import type { SellBuyCoin } from "../types/Converter.types";
 
 const Converter = () => {
   const [convertAmount, setConvertAmount] = useState<string>("");
