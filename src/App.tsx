@@ -9,6 +9,7 @@ import Prices from "./pages/Prices";
 import "./index.css";
 import Chart from "./pages/Chart";
 import Converter from "./pages/Converter";
+import Gainers from "./pages/Gainers";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
         <Route path="/" element={<Prices />} />
         <Route path="/charts" element={<Chart />} />
         <Route path="/converter" element={<Converter />} />
-
+        <Route path="/gainers" element={<Gainers />} />
         {/*
         <Route path="/gainers" element={<Gainers />} />
         <Route path="/alerts" element={<Alerts />} />
