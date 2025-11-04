@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { UTCTimestamp } from "lightweight-charts";
-import type { ChartComponentProps, ChartData } from "./Chart.types";
+import type { ChartComponentProps, ChartData } from "../../types/Chart.types";
 import useChart from "../../hooks/useChart";
 import { getHistoricalData } from "../../services/coinGecko";
 
