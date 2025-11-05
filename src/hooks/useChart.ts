@@ -20,11 +20,31 @@ const useChart = (data: Data[], graphRange: string, setGraphRange?: (range: stri
         const backgroundColor = isDarkMode ? "#1f2937" : "white";
         const textColor = isDarkMode ? "white" : "black";
 
+        // Calculate responsive chart height
+        const calculateChartHeight = () => {
+            if (!chartContainerRef.current) return 300;
+
+            const containerWidth = chartContainerRef.current.clientWidth;
+
+            // Use different ratios based on screen size
+            if (containerWidth < 640) {
+                // Mobile: 60% of width, minimum 300px
+                return Math.max(containerWidth * 0.65, 300);
+            } else if (containerWidth < 1024) {
+                // Tablet: 40% of width
+                return containerWidth * 0.45;
+            } else {
+                // Desktop: 30% of width
+                return containerWidth * 0.25;
+            }
+        };
+
         //for developing purposes, chart will autochange by changed screen
         const handleResize = () => {
             if (chartContainerRef.current) {
                 chart.applyOptions({
                     width: chartContainerRef.current.clientWidth,
+                    height: calculateChartHeight()
                 });
             }
         };
@@ -36,7 +56,7 @@ const useChart = (data: Data[], graphRange: string, setGraphRange?: (range: stri
                 textColor,
             },
             width: chartContainerRef.current.clientWidth,
-            height: 120,
+            height: calculateChartHeight(),
             grid: {
                 vertLines: {
                     visible: false,
