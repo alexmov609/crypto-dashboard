@@ -20,7 +20,7 @@ const Prices = () => {
   return (
     <div className="min-h-[calc(100vh-64px)] text-white overflow-y-auto overflow-x-hidden bg-black">
       {/* TradingView Ticker */}
-      <div className="w-full px-3 md:px-5 pt-4 md:pt-6 pb-4">
+      <div className="w-full px-2 sm:px-3 md:px-5 pt-3 sm:pt-4 md:pt-6 pb-3 sm:pb-4">
         <div
           className="tradingview-widget-container rounded-lg overflow-hidden"
           ref={tickerRef}
@@ -28,8 +28,8 @@ const Prices = () => {
       </div>
 
       {/* Cards Grid */}
-      <div className="w-full px-3 md:px-5 pb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="w-full px-2 sm:px-3 md:px-5 pb-4 sm:pb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6">
           {liveData &&
             coinPricesArray.map((el, ind) => {
               const coinData: LiveDataResponseObject = liveData[el];
