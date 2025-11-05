@@ -42,25 +42,25 @@ const Converter = () => {
   } = useConverterData;
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-hidden flex items-center justify-center p-6">
+    <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-auto flex items-center justify-center p-3 sm:p-4 md:p-6">
       <div className="w-full max-w-2xl">
-        <div className="text-3xl md:text-4xl tracking-wide font-bold mb-8 text-center">
+        <div className="text-2xl sm:text-3xl md:text-4xl tracking-wide font-bold mb-6 sm:mb-8 text-center">
           Currency Converter
         </div>
 
         {/* Main Conversion Card */}
-        <div className="relative w-full p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-900 via-black to-gray-900 border border-green-500/30 shadow-[0_0_40px_rgba(74,222,128,0.15),0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl hover:border-green-500/50 hover:shadow-[0_0_60px_rgba(74,222,128,0.25),0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 ease-in-out before:absolute before:inset-0 before:rounded-2xl before:p-[1px] before:bg-gradient-to-br before:from-green-500/20 before:via-transparent before:to-green-500/20 before:-z-10 before:opacity-0 before:hover:opacity-100 before:transition-opacity before:duration-500">
+        <div className="relative w-full p-4 sm:p-6 md:p-8 rounded-2xl bg-gradient-to-br from-gray-900 via-black to-gray-900 border border-green-500/30 shadow-[0_0_40px_rgba(74,222,128,0.15),0_20px_50px_rgba(0,0,0,0.5)] backdrop-blur-xl hover:border-green-500/50 hover:shadow-[0_0_60px_rgba(74,222,128,0.25),0_25px_60px_rgba(0,0,0,0.6)] transition-all duration-500 ease-in-out before:absolute before:inset-0 before:rounded-2xl before:p-[1px] before:bg-gradient-to-br before:from-green-500/20 before:via-transparent before:to-green-500/20 before:-z-10 before:opacity-0 before:hover:opacity-100 before:transition-opacity before:duration-500">
           {/* From Section */}
-          <div className="mb-6">
-            <div className="relative flex flex-col text-start bg-gradient-to-br from-gray-900 to-black rounded-xl p-5 shadow-lg border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
+          <div className="mb-4 sm:mb-6">
+            <div className="relative flex flex-col text-start bg-gradient-to-br from-gray-900 to-black rounded-xl p-3 sm:p-5 shadow-lg border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
               <label
                 htmlFor="exchange-coin1"
-                className="text-sm font-semibold text-gray-400 mb-3 transition-all duration-200 ease-in-out"
+                className="text-xs sm:text-sm font-semibold text-gray-400 mb-2 sm:mb-3 transition-all duration-200 ease-in-out"
               >
                 From
               </label>
 
-              <div className="flex flex-col sm:flex-row gap-3 items-end">
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 items-end">
                 {/* Amount Input */}
                 <div className="flex-1 w-full">
                   <label
@@ -79,23 +79,23 @@ const Converter = () => {
                   />
                 </div>
                 {/* Quick Amount Buttons */}
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 w-full sm:w-auto">
                   <button
                     onClick={() => subConvertAmount(convertAmount)}
-                    className="w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300"
+                    className="flex-1 sm:flex-none w-auto sm:w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300"
                   >
                     -
                   </button>
                   <button
                     onClick={() => addConvertAmount(convertAmount)}
-                    className="w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300"
+                    className="flex-1 sm:flex-none w-auto sm:w-[45px] h-[45px] text-lg text-center font-bold bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-lg cursor-pointer text-gray-900 shadow-lg hover:shadow-[0_0_20px_rgba(74,222,128,0.4)] transition-all duration-300"
                   >
                     +
                   </button>
                 </div>
               </div>
               {convertAmountError ? (
-                <div className="text-red-500 mt-2 ms-2">
+                <div className="text-red-500 text-xs sm:text-sm mt-2 ms-2">
                   Amount is required *
                 </div>
               ) : (
@@ -215,11 +215,11 @@ const Converter = () => {
           </div>
 
           {/* To Section */}
-          <div className="mt-6">
-            <div className="relative flex flex-col text-start bg-gradient-to-br from-gray-900 to-black rounded-xl p-5 shadow-lg border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
+          <div className="mt-4 sm:mt-6">
+            <div className="relative flex flex-col text-start bg-gradient-to-br from-gray-900 to-black rounded-xl p-3 sm:p-5 shadow-lg border border-green-500/20 hover:border-green-500/40 transition-all duration-300">
               <label
                 htmlFor="exchange-coin2"
-                className="text-sm font-semibold text-gray-400 mb-3 transition-all duration-200 ease-in-out"
+                className="text-xs sm:text-sm font-semibold text-gray-400 mb-2 sm:mb-3 transition-all duration-200 ease-in-out"
               >
                 To
               </label>
@@ -313,25 +313,25 @@ const Converter = () => {
           </div>
 
           {/* Result Section */}
-          <div className="mt-8 pt-6 border-t border-green-500/20">
-            <div className="bg-gradient-to-br from-green-900/20 to-green-800/10 rounded-xl p-5 border border-green-500/30">
-              <div className="text-sm font-semibold text-gray-400 mb-2">
+          <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-green-500/20">
+            <div className="bg-gradient-to-br from-green-900/20 to-green-800/10 rounded-xl p-3 sm:p-5 border border-green-500/30">
+              <div className="text-xs sm:text-sm font-semibold text-gray-400 mb-2">
                 Conversion Result
               </div>
               {apiGetPriceError ? (
-                <div className="text-red-500 mt-2 ms-2">
+                <div className="text-red-500 text-xs sm:text-sm mt-2 ms-2">
                   Error to fetch Coins Prices, please try again later *
                 </div>
               ) : (
                 <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-3xl md:text-4xl font-bold text-green-400">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-green-400 break-all">
                       {convertionResult && convertionResult.toFixed(6)}
                       0.00
                     </span>
-                    <span className="text-lg text-gray-400">ETH</span>
+                    <span className="text-base sm:text-lg text-gray-400">ETH</span>
                   </div>
-                  <div className="text-xs text-gray-500 mt-2">
+                  <div className="text-xs text-gray-500 mt-2 break-words">
                     {convertionResult
                       ? `1 ${coinToSell!.coin.toUpperCase()} = ${
                           convertionResult / parseFloat(convertAmount)
@@ -345,7 +345,7 @@ const Converter = () => {
 
           {/* Convert Button */}
           <button
-            className="w-full mt-6 px-6 py-4 bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-xl cursor-pointer text-gray-900 font-bold text-lg shadow-lg hover:shadow-[0_0_30px_rgba(74,222,128,0.5)] transition-all duration-300 transform hover:scale-[1.02]"
+            className="w-full mt-4 sm:mt-6 px-4 sm:px-6 py-3 sm:py-4 bg-gradient-to-br from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 rounded-xl cursor-pointer text-gray-900 font-bold text-base sm:text-lg shadow-lg hover:shadow-[0_0_30px_rgba(74,222,128,0.5)] transition-all duration-300 transform hover:scale-[1.02]"
             onClick={handleConvert}
           >
             Convert
