@@ -64,12 +64,12 @@ export const ChartComponent = ({
   const chartContainerRef = useChart(data, graphRange, setGraphRange);
 
   return (
-    <div className="w-full h-full min-h-[200px] p-4 bg-white border border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 ease-in-out">
+    <div className="w-full h-auto min-h-[400px] sm:min-h-[500px] md:h-[70vh] my-0 bg-white border p-3 sm:p-4 border-gray-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 ease-in-out">
       {/* Crypto Info Header */}
-      <div className="mb-4 text-left">
-        <div className="flex items-center justify-between mb-2">
+      <div className="mb-3 sm:mb-4 text-left">
+        <div className="flex items-center justify-between mb-2 gap-2">
           <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+            <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">
               {cryptoSymbol}
             </h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -78,12 +78,12 @@ export const ChartComponent = ({
           </div>
           <div className="text-right">
             {isLoading ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 Loading...
               </p>
             ) : (
               <>
-                <p className="text-xl font-bold text-gray-900 dark:text-white">
+                <p className="text-base sm:text-xl font-bold text-gray-900 dark:text-white">
                   $
                   {currentPrice.toLocaleString("en-US", {
                     minimumFractionDigits: 2,
@@ -91,7 +91,7 @@ export const ChartComponent = ({
                   })}
                 </p>
                 <p
-                  className={`text-sm font-semibold ${
+                  className={`text-xs sm:text-sm font-semibold ${
                     isPositiveChange ? "text-green-500" : "text-red-500"
                   }`}
                 >
@@ -105,7 +105,7 @@ export const ChartComponent = ({
       </div>
 
       {/* Chart */}
-      <div className={"block"} ref={chartContainerRef} />
+      <div className={"block w-full min-h-[350px] sm:min-h-[450px] md:min-h-[60vh]"} ref={chartContainerRef} />
     </div>
   );
 };
