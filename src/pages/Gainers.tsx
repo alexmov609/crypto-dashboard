@@ -67,25 +67,25 @@ const Gainers = () => {
   }
 
   return (
-    <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-auto p-6">
+    <div className="min-h-[calc(100vh-64px)] bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white overflow-auto p-3 sm:p-4 md:p-6">
       <div className="flex flex-col w-full max-w-7xl mx-auto">
-        <div className="text-3xl md:text-4xl tracking-wide font-bold mb-8 text-center">
+        <div className="text-2xl sm:text-3xl md:text-4xl tracking-wide font-bold mb-6 sm:mb-8 text-center">
           Top Gainers & Losers
         </div>
 
         {/* Gainers Table */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold mb-4 text-green-400">
+        <div className="mb-8 sm:mb-12">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-green-400">
             Top 10 Gainers
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse bg-gray-800/50 rounded-lg overflow-hidden">
+          <div className="overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
+            <table className="w-full min-w-[640px] border-collapse bg-gray-800/50 rounded-lg overflow-hidden">
               <thead className="bg-gray-700">
                 {gainersTable.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
-                        className="border border-gray-600 p-3 text-left font-semibold"
+                        className="border border-gray-600 p-2 sm:p-3 text-left font-semibold text-xs sm:text-sm"
                         colSpan={header.colSpan}
                         key={header.id}
                       >
@@ -119,7 +119,7 @@ const Gainers = () => {
                                   header.column.setFilterValue(e.target.value)
                                 }
                                 placeholder="Filter..."
-                                className="mt-2 w-full px-2 py-1 text-sm bg-gray-600 border border-gray-500 rounded text-white"
+                                className="mt-1 sm:mt-2 w-full px-2 py-1 text-xs sm:text-sm bg-gray-600 border border-gray-500 rounded text-white"
                               />
                             ) : null}
                           </div>
@@ -136,7 +136,7 @@ const Gainers = () => {
                     className="hover:bg-gray-700/50 transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td className="border border-gray-600 p-3" key={cell.id}>
+                      <td className="border border-gray-600 p-2 sm:p-3 text-xs sm:text-sm" key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -152,17 +152,17 @@ const Gainers = () => {
 
         {/* Losers Table */}
         <div>
-          <h2 className="text-2xl font-semibold mb-4 text-red-400">
+          <h2 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-red-400">
             Top 10 Losers
           </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse bg-gray-800/50 rounded-lg overflow-hidden">
+          <div className="overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0">
+            <table className="w-full min-w-[640px] border-collapse bg-gray-800/50 rounded-lg overflow-hidden">
               <thead className="bg-gray-700">
                 {losersTable.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map((header) => (
                       <th
-                        className="border border-gray-600 p-3 text-left font-semibold"
+                        className="border border-gray-600 p-2 sm:p-3 text-left font-semibold text-xs sm:text-sm"
                         colSpan={header.colSpan}
                         key={header.id}
                       >
@@ -196,7 +196,7 @@ const Gainers = () => {
                                   header.column.setFilterValue(e.target.value)
                                 }
                                 placeholder="Filter..."
-                                className="mt-2 w-full px-2 py-1 text-sm bg-gray-600 border border-gray-500 rounded text-white"
+                                className="mt-1 sm:mt-2 w-full px-2 py-1 text-xs sm:text-sm bg-gray-600 border border-gray-500 rounded text-white"
                               />
                             ) : null}
                           </div>
@@ -213,7 +213,7 @@ const Gainers = () => {
                     className="hover:bg-gray-700/50 transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <td className="border border-gray-600 p-3" key={cell.id}>
+                      <td className="border border-gray-600 p-2 sm:p-3 text-xs sm:text-sm" key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
