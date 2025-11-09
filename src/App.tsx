@@ -20,10 +20,6 @@ function App() {
         <Route path="/charts" element={<Chart />} />
         <Route path="/converter" element={<Converter />} />
         <Route path="/gainers" element={<Gainers />} />
-        {/*
-        <Route path="/gainers" element={<Gainers />} />
-        <Route path="/alerts" element={<Alerts />} />
-        <Route path="/portfolio" element={<Portfolio />} /> */}
       </Routes>
     </BrowserRouter>
   );
