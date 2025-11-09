@@ -67,17 +67,13 @@ export const getTopGainersAndLosers = async () => {
         const response = await fetch(binanceTopGainersLosers);
         const data = await response.json();
 
-        // Get top 10 gainers
-        const gainers = data
-            .filter((ticker: TickerResponse) => ticker.symbol.endsWith('USDT')) // Filter for USDT pairs
-            .sort((a: TickerResponse, b: TickerResponse) => parseFloat(b.priceChangePercent) - parseFloat(a.priceChangePercent))
-            .slice(0, 10);
-
-        // Get top 10 losers
-        const losers = data
-            .filter((ticker: TickerResponse) => ticker.symbol.endsWith('USDT'))
-            .sort((a: TickerResponse, b: TickerResponse) => parseFloat(a.priceChangePercent) - parseFloat(b.priceChangePercent))
-            .slice(0, 10);
+        // Single pass: filter once, sort once (desc), then slice ends
+        const usdtOnly: TickerResponse[] = data.filter((ticker: TickerResponse) => ticker.symbol.endsWith('USDT'));
+        // Sort by change percent descending once
+        const sortedDesc = usdtOnly.sort((a: TickerResponse, b: TickerResponse) => parseFloat(b.priceChangePercent) - parseFloat(a.priceChangePercent));
+        const gainers = sortedDesc.slice(0, 10);
+        // losers are bottom 10 in ascending order
+        const losers = sortedDesc.slice(-10).reverse();
 
         return { gainers, losers };
     } catch (error) {

@@ -8,9 +8,15 @@ export interface ChartData {
 
 // Props for Chart component
 export interface ChartComponentProps {
-    coinId: string;
+    coinId?: string;
     cryptoName?: string;
     cryptoSymbol?: string;
+    coins?: Array<{
+        coinId: string;
+        cryptoName: string;
+        cryptoSymbol: string;
+        image?: string;
+    }>;
 }
 
 //Interface for the reruned data from COINGECKO + key(coin name)
