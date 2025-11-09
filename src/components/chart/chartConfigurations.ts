@@ -15,3 +15,17 @@ export const areaTopColors = {
 export const intervals = ["1D", "1W", "1M", "1Y"] as const;
 export type Interval = (typeof intervals)[number];
 
+// Color palette for multiple coin comparison
+export const compareColors = [
+  "#2962FF", // Blue
+  "#E15758", // Red
+  "#F29A2E", // Orange
+  "#A459D1", // Purple
+  "#4ECDC4", // Teal
+  "#FFE66D", // Yellow
+  "#FF6B6B", // Coral
+  "#95E1D3", // Mint
+  "#F38181", // Pink
+  "#AA96DA", // Lavender
+];
+
