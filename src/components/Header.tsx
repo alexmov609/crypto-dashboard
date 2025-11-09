@@ -9,12 +9,14 @@ const Header = () => {
     <header className="min-h-15 bg-gradient-to-r from-black to-green-400 px-4 sm:px-6 py-4">
       <nav className="flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center gap-3">
-          <div className="text-xl sm:text-2xl font-bold text-white">CryptoDash</div>
+          <div className="text-xl sm:text-2xl font-bold text-white">
+            CryptoDash
+          </div>
           <div className="hidden lg:flex items-center gap-2 text-xs text-white/80">
             <span>© {currentYear} Alex Movchan</span>
             <span>•</span>
             <a
-              href="https://github.com/alexmovchan"
+              href="https://github.com/alexmov609/crypto-dashboard"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1 hover:text-green-300 transition-colors"
@@ -68,16 +70,28 @@ const Header = () => {
 
         {/* Desktop menu */}
         <ul className="hidden md:flex gap-6 text-white">
-          <Link className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" to="/">
+          <Link
+            className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full"
+            to="/"
+          >
             Prices
           </Link>
-          <Link className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" to="/charts">
+          <Link
+            className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full"
+            to="/charts"
+          >
             Charts
           </Link>
-          <Link className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" to="/converter">
+          <Link
+            className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full"
+            to="/converter"
+          >
             Converter
           </Link>
-          <Link className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full" to="/gainers">
+          <Link
+            className="relative transition-all duration-300 hover:scale-110 hover:text-green-300 after:content-[''] after:absolute after:w-0 after:h-0.5 after:bg-green-300 after:left-1/2 after:-translate-x-1/2 after:bottom-0 after:transition-all after:duration-300 hover:after:w-full"
+            to="/gainers"
+          >
             Gainers/Losers
           </Link>
         </ul>
